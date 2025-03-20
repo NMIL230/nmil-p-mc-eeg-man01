@@ -1,0 +1,9 @@
+{
+  "trial_mad_multiplier": 3.5,
+  "mean_mad_multiplier": 3.5,
+  "max_excessive_rt": 10.0,
+  "max_outlier_pct": 25.0,
+  "min_samples": 5,
+  "remove_final_outlier_participants": true,
+  "use_incomplete_sessions": false
+}

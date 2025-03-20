@@ -1,0 +1,32 @@
+# Ignore MC world files
+*.mca
+*.pyc
+
+# Ignore PIXELLOG files
+*.json
+*.bson
+*.zip
+*.sh
+*.tar.gz
+*._.DS_Store
+*.DS_Store
+
+# accept cleaning config
+!cleaning_config.json 
+
+# Ignore viz files
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.dat
+*.pptx
+*.csv
+
+# Ignore cache files
+*.pyc
+
+#ignore pkls
+*.pkl
