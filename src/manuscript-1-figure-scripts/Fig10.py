@@ -336,6 +336,7 @@ def correlate_bm_vs_lswm_first_bm(manager: GameDataManager, build_modes, output_
     
     # Save detailed contribution data
     contribution_path = output_dir / "participant_contributions.csv"
+    output_dir.mkdir(parents=True, exist_ok=True)  # Create directory if it doesn't exist
     df[["PID", "BM_Mode", "LSWM_Form"]].drop_duplicates().to_csv(contribution_path, index=False)
     print(f"\nSaved detailed contribution data to: {contribution_path}")
 
