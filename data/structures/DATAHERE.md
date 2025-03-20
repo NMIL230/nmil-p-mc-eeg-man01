@@ -1,2 +1,2 @@
 # nmil-p-mc-eeg-man01
-Insert the pkls here.
+Insert the pkls in this directory.
