@@ -43,7 +43,7 @@ RESAMPLE_LEN = 120
 N_COMPONENTS = 2
 N_NEIGHBORS = 5
 MIN_DIST = 0.005
-EPS = 1.1
+EPS = 1.0
 MIN_SAMPLES = 30
 
 # Yaw shift for display.
@@ -260,7 +260,7 @@ def plot_average_trajectories(all_trajs, labels, yaw_shift, out_dir):
     handles = []
     for cid in sorted(np.unique(labels)):
         idxs = np.where(labels == cid)[0]
-        if cid == -1 or len(idxs) < 100:
+        if cid == -1 or len(idxs) <= 100:
             continue
         color = get_cluster_color(cid)
         resampled_list = []
