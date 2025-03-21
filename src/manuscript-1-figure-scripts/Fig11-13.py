@@ -82,27 +82,12 @@ BOX_SIZE = 0.717
 FIG11_XLIM = (-1.5, 3)
 FIG11_YLIM = (0, 7)
 
-# --- FigX22: 2×2 Clusters ---
-CLUSTERS_2X2_FIG_SIZE  = (12, 10)
-CLUSTERS_2X2_X_LABEL   = "X"
-CLUSTERS_2X2_Y_LABEL   = "Z"
-CLUSTERS_2X2_LINE_WIDTH = 2
-CLUSTERS_2X2_ALPHA      = 0.05
-
 # --- UMAP Plot Settings ---
 UMAP_TITLE = "UMAP Projections of Trajectories Clustered Via DBSCAN"
 UMAP_FIG_SIZE = (8, 6)
 UMAP_ALPHA = 0.2
 UMAP_POINT_SIZE = 40
 UMAP_TICK_COUNT = 5
-
-# For FigX22, double the linewidth and use half the base alpha.
-CLUSTERS_2X2_LINE_WIDTH_12 = CLUSTERS_2X2_LINE_WIDTH * 2
-CLUSTERS_2X2_ALPHA_12      = CLUSTERS_2X2_ALPHA * 0.5
-
-# Hardcoded bounds for FigX22.
-FIG12_XLIM = (-4, 4)
-FIG12_YLIM = (0, 7)
 
 # --- Fig13: Confusion Matrix ---
 CONF_MATRIX_FIG_SIZE   = (6, 5)
@@ -114,15 +99,13 @@ CONF_MATRIX_Y_LABEL    = "True PID"
 # MANUSCRIPT FIGURE OUTPUT DIRECTORIES
 ##############################
 MANUSCRIPT_DIR = "manuscript-1-figures"
-FIG11_20_21_22_DIR = os.path.join(MANUSCRIPT_DIR, "Fig11-22")
+FIG11_20_21_22_DIR = os.path.join(MANUSCRIPT_DIR, "Fig11-13")
 FIG11_DIR = os.path.join(FIG11_20_21_22_DIR, "Fig11")
 FIG12_DIR = os.path.join(FIG11_20_21_22_DIR, "Fig12")
 FIG13_DIR = os.path.join(FIG11_20_21_22_DIR, "Fig13")
-FIGX22_DIR = os.path.join(FIG11_20_21_22_DIR, "FigX22")
 os.makedirs(FIG11_DIR, exist_ok=True)
 os.makedirs(FIG12_DIR, exist_ok=True)
 os.makedirs(FIG13_DIR, exist_ok=True)
-os.makedirs(FIGX22_DIR, exist_ok=True)
 
 # --- ARCHIVING ---
 ARCHIVE_DATA = True
@@ -354,48 +337,6 @@ def plot_umap_clusters(embedding, labels, out_dir):
     plt.savefig(base_path + ".pdf", dpi=400, bbox_inches='tight')
     plt.close()
     print(f"[PLOT] UMAP clusters (0–3 only) saved as {base_path}.png and {base_path}.pdf")
-
-def plot_2x2_clusters(all_trajs, labels, cluster_color_map, out_dir):
-    unique_clusters = [c for c in np.unique(labels) if c >= 0]
-    unique_clusters.sort()
-    if len(unique_clusters) == 0:
-        print("[plot_2x2_clusters] No clusters (excluding noise) => skipping.")
-        return
-    clusters_to_plot = unique_clusters[:4]
-    fig, axes = plt.subplots(2, 2, figsize=CLUSTERS_2X2_FIG_SIZE)
-    axes = axes.flatten()
-    for idx, cid in enumerate(clusters_to_plot):
-        ax = axes[idx]
-        idxs = np.where(labels == cid)[0]
-        color = cluster_color_map.get(cid, "black")
-        for i in idxs:
-            traj = all_trajs[i]
-            x_vals = traj[:, 0]
-            z_vals = traj[:, 1]
-            ax.plot(x_vals, z_vals, color=color,
-                    alpha=CLUSTERS_2X2_ALPHA_12,
-                    linewidth=CLUSTERS_2X2_LINE_WIDTH_12)
-        ax.set_title(f"Type {['DG', 'IN', 'IG', 'DN'][cid]} (N={len(idxs)})")
-        ax.set_xlabel(CLUSTERS_2X2_X_LABEL)
-        ax.set_ylabel(CLUSTERS_2X2_Y_LABEL)
-        ax.set_xlim(FIG12_XLIM)
-        ax.set_ylim(FIG12_YLIM)
-        ax.set_xticks(np.linspace(FIG12_XLIM[0], FIG12_XLIM[1], N_MAJOR_TICKS))
-        ax.set_yticks(np.linspace(FIG12_YLIM[0], FIG12_YLIM[1], N_MAJOR_TICKS))
-        ax.set_aspect('equal', adjustable='box')
-        square_side = 0.5
-        square_bl = (2.5 - square_side/2, 6 - square_side/2)
-        ax.add_patch(patches.Rectangle(square_bl, square_side, square_side,
-                                       facecolor='gray', edgecolor='none'))
-    for extra_ax in axes[len(clusters_to_plot):]:
-        extra_ax.axis("off")
-    plt.tight_layout()
-    folder_name = os.path.basename(os.path.normpath(out_dir))
-    base_path = os.path.join(out_dir, folder_name)
-    plt.savefig(base_path + ".png", dpi=400, bbox_inches='tight')
-    plt.savefig(base_path + ".pdf", dpi=400, bbox_inches='tight')
-    plt.close()
-    print(f"[PLOT] 2×2 clusters saved as {base_path}.png and {base_path}.pdf")
 
 ##############################
 # 5) Equal-Weight Identifiability & Bootstrapping
@@ -703,7 +644,6 @@ def main():
     # 4) Plots
     plot_average_trajectories(all_trajs, labels, yaw_shift=YAW_SHIFT, out_dir=FIG11_DIR)
     plot_umap_clusters(emb_2d, labels, out_dir=FIG12_DIR)
-    plot_2x2_clusters(all_trajs, labels, cluster_color_map, out_dir=FIGX22_DIR)
     
     # 5) Build distribution dict for reliability & plot confusion matrix
     breakdown_dict, unique_clusters = build_breakdown_dict_for_reliability(all_metadata, labels)
